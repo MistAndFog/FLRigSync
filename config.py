@@ -2,24 +2,25 @@ import os
 import yaml
 from PySide6.QtCore import QObject, Signal
 from pathlib import Path
+import config
 
 SDR_PP = 'SDR++'
 VALID_SDRS = [SDR_PP]
-SDR_SOFTWARE = 'SDR_SOFTWARE'
-SDR_LOCATION = 'SDR_LOCATION'
-SDR_IP = 'SDR_IP'
-SDR_PORT = 'SDR_PORT'
+CAT2_SOFTWARE = 'CAT2_SOFTWARE'
+CAT2_LOCATION = 'CAT2_LOCATION'
+CAT2_IP = 'CAT2_IP'
+CAT2_PORT = 'CAT2_PORT'
 
-CAT_LOCATION = 'CAT_LOCATION'
-CAT_IP = 'CAT_IP'
-CAT_PORT = 'CAT_PORT'
+CAT1_SOFTWARE = 'CAT1_Software'
+CAT1_LOCATION = 'CAT_LOCATION'
+CAT1_IP = 'CAT_IP'
+CAT1_PORT = 'CAT_PORT'
 
 RADIO_INFO_PORT = 'RADIO_INFO_PORT'
 
 RECONNECT_TIME = 'RECONNECT_TIME'  # seconds
 SYNC_INTERVAL = 'SYNC_TIME'  # seconds
 
-CAT_SOFTWARE = 'CAT_Software'
 PLACEHOLDER_SOFTWARE = '--select your software--'
 DXLAB = 'DXLab'
 RUMLOG = 'RUMLogNG'
@@ -37,77 +38,82 @@ LOCAL_HOST = '127.0.0.1'
 
 class Parameters(QObject):
     # Qt Signals
-    sdr_location_changed = Signal(str)
+    CAT2_LOCATION_changed = Signal(str)
     cat_software_changed = Signal(str)
     cat_location_changed = Signal(str)
 
     def __init__(self,
-                 sdr_software=SDR_PP,
-                 sdr_location=LOCAL,
-                 sdr_ip=LOCAL_HOST,
-                 sdr_port=4532,
-                 cat_location=LOCAL,
-                 cat_software=RUMLOG,
-                 cat_ip=LOCAL_HOST,
-                 cat_port=5555,
+                 cat1_software=FLRIG,
+                 cat1_location=LOCAL,
+                 cat1_ip=LOCAL_HOST,
+                 cat1_port=4532,
+                 cat2_location=LOCAL,
+                 cat2_software=FLRIG,
+                 cat2_ip=LOCAL_HOST,
+                 cat2_port=5555,
                  radio_info_port=13063,
                  reconnect_time=10,
                  sync_interval=0.1
                  ):
         super().__init__(None)
-        self.sdr_software = sdr_software
-        self.sdr_location = sdr_location
-        self.sdr_ip = sdr_ip
-        self.sdr_port = sdr_port
-        self.cat_location = cat_location
-        self.cat_software = cat_software
-        self.cat_ip = cat_ip
-        self.cat_port = cat_port
+        self.cat1_software = cat1_software
+        self.cat1_location = cat1_location
+        self.cat1_ip = cat1_ip
+        self.cat1_port = cat1_port
+        self.cat2_location = cat2_location
+        self.cat2_software = cat2_software
+        self.cat2_ip = cat2_ip
+        self.cat2_port = cat2_port
         self.radio_info_port = radio_info_port
         self.reconnect_time = reconnect_time
         self.sync_interval = sync_interval
 
     def copy(self):
         return Parameters(
-            self.sdr_software,
-            self.sdr_location,
-            self.sdr_ip,
-            self.sdr_port,
-            self.cat_location,
-            self.cat_software,
-            self.cat_ip,
-            self.cat_port,
+            self.cat1_software,
+            self.cat1_location,
+            self.cat1_ip,
+            self.cat1_port,
+            self.cat2_location,
+            self.cat2_software,
+            self.cat2_ip,
+            self.cat2_port,
             self.radio_info_port,
             self.reconnect_time,
             self.sync_interval
         )
 
-    def set_sdr_location(self, location):
-        if self.sdr_location != location:
-            self.sdr_location = location
-            self.sdr_location_changed.emit(location)
+    def set_cat1_location(self, location):
+        if self.cat1_location != location:
+            self.cat1_location = location
+            self.CAT2_LOCATION_changed.emit(location)
 
-    def set_cat_location(self, location):
-        if self.cat_location != location:
-            self.cat_location = location
+    def set_cat2_location(self, location):
+        if self.cat2_location != location:
+            self.cat2_location = location
             self.cat_location_changed.emit(location)
 
-    def set_sdr_ip(self, ip):
-        self.sdr_ip = ip
+    def set_cat1_ip(self, ip):
+        self.cat1_ip = ip
 
-    def set_sdr_port(self, port):
-        self.sdr_port = port
+    def set_cat1_port(self, port):
+        self.cat1_port = port
 
-    def set_cat_software(self, software):
-        if self.cat_software != software:
-            self.cat_software = software
+    def set_cat1_software(self, software):
+        if self.cat2_software != software:
+            self.cat2_software = software
             self.cat_software_changed.emit(software)
 
-    def set_cat_ip(self, ip):
-        self.cat_ip = ip
+    def set_cat2_software(self, software):
+        if self.cat2_software != software:
+            self.cat2_software = software
+            self.cat_software_changed.emit(software)
 
-    def set_cat_port(self, port):
-        self.cat_port = port
+    def set_cat2_ip(self, ip):
+        self.cat2_ip = ip
+
+    def set_cat2_port(self, port):
+        self.cat2_port = port
 
     def set_radio_info_port(self, port):
         self.radio_info_port = port
@@ -121,7 +127,7 @@ class Parameters(QObject):
 
 class Config:
     def __init__(self):
-        self.params = Parameters()
+        self.params: config.Parameters = Parameters()
 
         script_dir = os.path.dirname(os.path.realpath(__file__))
         work_dir = os.getcwd()
@@ -143,28 +149,28 @@ class Config:
                     print(e)
 
     def update_params_from(self, params_dict):
-        self.params.sdr_software = params_dict.get(SDR_SOFTWARE, self.params.sdr_software)
-        self.params.sdr_location = params_dict.get(SDR_LOCATION, self.params.sdr_location)
-        self.params.sdr_ip = params_dict.get(SDR_IP, self.params.sdr_ip)
-        self.params.sdr_port = params_dict.get(SDR_PORT, self.params.sdr_port)
-        self.params.cat_software = params_dict.get(CAT_SOFTWARE, self.params.cat_software)
-        self.params.cat_location = params_dict.get(CAT_LOCATION, self.params.cat_location)
-        self.params.cat_ip = params_dict.get(CAT_IP, self.params.cat_ip)
-        self.params.cat_port = params_dict.get(CAT_PORT, self.params.cat_port)
+        self.params.cat1_software = params_dict.get(CAT1_SOFTWARE, self.params.cat1_software)
+        self.params.cat1_location = params_dict.get(CAT1_LOCATION, self.params.cat1_location)
+        self.params.cat1_ip = params_dict.get(CAT1_IP, self.params.cat1_ip)
+        self.params.cat1_port = params_dict.get(CAT1_PORT, self.params.cat1_port)
+        self.params.cat2_software = params_dict.get(CAT2_SOFTWARE, self.params.cat2_software)
+        self.params.cat2_location = params_dict.get(CAT2_LOCATION, self.params.cat2_location)
+        self.params.cat2_ip = params_dict.get(CAT2_IP, self.params.cat2_ip)
+        self.params.cat2_port = params_dict.get(CAT2_PORT, self.params.cat2_port)
         self.params.radio_info_port = params_dict.get(RADIO_INFO_PORT, self.params.radio_info_port)
         self.params.reconnect_time = params_dict.get(RECONNECT_TIME, self.params.reconnect_time)
         self.params.sync_interval = params_dict.get(SYNC_INTERVAL, self.params.sync_interval)
 
     def get_data(self):
         return {
-            SDR_SOFTWARE: self.params.sdr_software,
-            SDR_LOCATION: self.params.sdr_location,
-            SDR_IP: self.params.sdr_ip,
-            SDR_PORT: self.params.sdr_port,
-            CAT_LOCATION: self.params.cat_location,
-            CAT_SOFTWARE: self.params.cat_software,
-            CAT_IP: self.params.cat_ip,
-            CAT_PORT: self.params.cat_port,
+            CAT1_SOFTWARE: self.params.cat1_software,
+            CAT1_LOCATION: self.params.cat1_location,
+            CAT1_IP: self.params.cat1_ip,
+            CAT1_PORT: self.params.cat1_port,
+            CAT2_LOCATION: self.params.cat2_location,
+            CAT2_SOFTWARE: self.params.cat2_software,
+            CAT2_IP: self.params.cat2_ip,
+            CAT2_PORT: self.params.cat2_port,
             RADIO_INFO_PORT: self.params.radio_info_port,
             RECONNECT_TIME: self.params.reconnect_time,
             SYNC_INTERVAL: self.params.sync_interval

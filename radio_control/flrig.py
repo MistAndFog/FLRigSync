@@ -43,8 +43,8 @@ SDR_TO_RADIO = {
 class FlrigClient():
 
     def __init__(self, ip, port):
-        self.last_mode = None
-        self.last_freq = None
+        self.last_mode = "USB"
+        self.last_freq = 0
         self._ip = ip
         self._port = port
         self._sock = None

@@ -1,4 +1,5 @@
 import copy
+import config
 
 from PySide6.QtCore import Slot
 from PySide6.QtWidgets import QVBoxLayout, QDialog, QDialogButtonBox
@@ -10,23 +11,23 @@ from config import VALID_CAT_SOFTWARES, PLACEHOLDER_SOFTWARE, VALID_SDRS, SDR_PP
 
 
 class Settings(QDialog):
-    def __init__(self, params, parent=None):
+    def __init__(self, params: config.Parameters, parent=None):
         super().__init__(parent)
 
         # Set up data
-        self.params = params.copy()
+        self.params: config.Parameters = params.copy()
 
         # Set up UI
         self.parent_window = parent
         self.radio_info_widget = None
-        self.sdr_ip_widget = None
-        self.cat_ip_widget = None
+        self.cat1_ip_widget = None
+        self.cat2_ip_widget = None
         self.setWindowTitle("Settings")
         self.setLayout(self.create_layout())
 
 
         # Connect Signals/Slots
-        self.params.sdr_location_changed.connect(self.sdr_location_changed)
+        self.params.CAT2_LOCATION_changed.connect(self.CAT2_LOCATION_changed)
         self.params.cat_location_changed.connect(self.cat_location_changed)
         self.params.cat_software_changed.connect(self.cat_software_changed)
 
@@ -34,28 +35,28 @@ class Settings(QDialog):
         layout = QVBoxLayout()
 
         # SDR type
-        layout.addWidget(Dropdown('SDR Software', self.params.sdr_software, VALID_SDRS, SDR_PP, None, disabled=True))
+        layout.addWidget(Dropdown('Radio Control(CAT) Software 1', self.params.cat1_software, VALID_CAT_SOFTWARES, PLACEHOLDER_SOFTWARE,lambda software1: self.params.set_cat1_software(software1)))
 
         # SDR Location
-        layout.addWidget(Dropdown("SDR running on", self.params.sdr_location, VALID_LOCATIONS, LOCAL, lambda location: self.params.set_sdr_location(location)))
+        layout.addWidget(Dropdown("CAT 1 running on", self.params.cat1_location, VALID_LOCATIONS, LOCAL, lambda location: self.params.set_cat1_location(location)))
         # SDR IP
-        self.sdr_ip_widget = TextInput("SDR IP", self.params.sdr_ip, lambda ip: self.params.set_sdr_ip(ip), self.params.sdr_location == NETWORK)
-        layout.addWidget(self.sdr_ip_widget)
+        self.cat1_ip_widget = TextInput("CAT 1 IP", self.params.cat1_ip, lambda ip: self.params.set_cat1_ip(ip), self.params.cat1_location == NETWORK)
+        layout.addWidget(self.cat1_ip_widget)
         # SDR Port
-        layout.addWidget(TextInput('SDR Port', self.params.sdr_port, lambda port: self.params.set_sdr_port(port), True, INTEGER))
+        layout.addWidget(TextInput('CAT 1 Port', self.params.cat1_port, lambda port: self.params.set_cat1_port(port), True, INTEGER))
 
         # CAT Software
-        layout.addWidget(Dropdown('Radio Control(CAT) Software', self.params.cat_software, VALID_CAT_SOFTWARES, PLACEHOLDER_SOFTWARE, lambda software: self.params.set_cat_software(software)))
+        layout.addWidget(Dropdown('Radio Control(CAT) Software 2', self.params.cat2_software, VALID_CAT_SOFTWARES, PLACEHOLDER_SOFTWARE, lambda software2: self.params.set_cat2_software(software2)))
         # CAT Location
-        layout.addWidget(Dropdown("CAT running on", self.params.cat_location, VALID_LOCATIONS, LOCAL, lambda location: self.params.set_cat_location(location)))
+        layout.addWidget(Dropdown("CAT 2 running on", self.params.cat1_location, VALID_LOCATIONS, LOCAL, lambda location: self.params.set_cat2_location(location)))
         # CAT IP
-        self.cat_ip_widget = TextInput('CAT IP', self.params.cat_ip, lambda ip: self.params.set_cat_ip(ip), self.params.cat_location == NETWORK)
-        layout.addWidget(self.cat_ip_widget)
+        self.cat2_ip_widget = TextInput('CAT 2 IP', self.params.cat2_ip, lambda ip: self.params.set_cat2_ip(ip), self.params.cat2_location == NETWORK)
+        layout.addWidget(self.cat2_ip_widget)
         # CAT Port
-        layout.addWidget(TextInput('CAT Port', self.params.cat_port, lambda port: self.params.set_cat_port(port), True, INTEGER))
+        layout.addWidget(TextInput('CAT 2 Port', self.params.cat2_port, lambda port: self.params.set_cat2_port(port), True, INTEGER))
 
         # Radio Info Port (only show when it's N1MM)
-        self.radio_info_widget = TextInput('Radio Info Port', self.params.radio_info_port, lambda port: self.params.set_radio_info_port(port), self.params.cat_software == N1MM, INTEGER)
+        self.radio_info_widget = TextInput('Radio Info Port', self.params.radio_info_port, lambda port: self.params.set_radio_info_port(port), self.params.cat2_software == N1MM, INTEGER)
         layout.addWidget(self.radio_info_widget)
 
         # Reconnect time
@@ -72,14 +73,14 @@ class Settings(QDialog):
         return layout
 
     @Slot(str)
-    def sdr_location_changed(self, location):
+    def CAT2_LOCATION_changed(self, location):
         print(f'Received SDR Location signal: {location}')
-        self.sdr_ip_widget.set_visibility(location == NETWORK)
+        self.cat1_ip_widget.set_visibility(location == NETWORK)
 
     @Slot(str)
     def cat_location_changed(self, location):
         print(f'Received CAT Location signal: {location}')
-        self.cat_ip_widget.set_visibility(location == NETWORK)
+        self.cat2_ip_widget.set_visibility(location == NETWORK)
 
     @Slot(str)
     def cat_software_changed(self, software):
@@ -88,7 +89,7 @@ class Settings(QDialog):
 
     def accept(self):
         if hasattr(self.parent_window, "update_params"):
-            if self.params.cat_software == PLACEHOLDER_SOFTWARE:
+            if self.params.cat1_software == PLACEHOLDER_SOFTWARE:
                 print('Please select a CAT Software')
                 return
             self.parent_window.update_params(self.params)
