@@ -21,7 +21,8 @@ class Dropdown(QWidget):
        if value in value_list:
            dropdown.setCurrentText(value)
 
-       dropdown.currentTextChanged.connect(handler)
+       if handler is not None:
+           dropdown.currentTextChanged.connect(handler)
        layout.addWidget(dropdown)
        dropdown.setDisabled(disabled)
 

@@ -69,6 +69,16 @@ class Commander(CATClient):
             self.set_last_mode(mode)
         return self.get_last_mode()
 
+    def set_freq(self, freq):
+        if freq and self.get_last_freq() != freq:
+            parameters = format_command('xcvrfreq', format_freq(freq))
+            cmd = format_command('command', 'CmdSetFreq') + format_command('parameters', parameters)
+        else:
+            return
+        self.send(cmd)
+        self.set_last_mode(mode)
+        self.set_last_freq(freq)
+
     def set_freq_mode(self, freq, mode=None):
         if mode and self.get_last_mode() != mode:
             parameters = format_command('xcvrfreq', format_freq(freq)) + format_command('xcvrmode', mode)

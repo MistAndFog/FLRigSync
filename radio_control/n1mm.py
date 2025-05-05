@@ -91,6 +91,14 @@ class N1MMClient:
         return self.last_mode
 
     # set frequency only, mode is not supported in N1MM
+    def set_freq(self, freq):
+        print(f'Set freq: {freq}')
+        cmd = set_frequency_message(freq)
+        if cmd:
+            self.last_freq = freq
+            self.send(cmd)
+
+    # set frequency only, mode is not supported in N1MM
     def set_freq_mode(self, freq, mode=None):
         print(f'Set freq: {freq}, mode: {mode}')
         cmd = set_frequency_message(freq)

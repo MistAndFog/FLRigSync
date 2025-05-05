@@ -99,8 +99,12 @@ celerybeat-schedule
 # Environments
 .env
 .venv
+.env*
+.venv*
 env/
 venv/
+env*/
+venv*/
 ENV/
 env.bak/
 venv.bak/
@@ -125,3 +129,10 @@ dmypy.json
 
 .idea/
 .DS_Store
+/.vs/FLRigSync/v17
+
+# ignore all . files and . folders
+.*
+
+# Include .gitignore
+!/.gitignore

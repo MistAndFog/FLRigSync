@@ -1,0 +1,98 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>a913abe9-2f60-4ef5-bc7b-b0571ba7cce3</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>app.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>FLRigSync</Name>
+    <RootNamespace>FLRigSync</RootNamespace>
+    <InterpreterId>MSBuild|.venv_FLRigSync|$(MSBuildProjectFullPath)</InterpreterId>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include=".vs\" />
+    <Folder Include=".vs\FLRigSync\" />
+    <Folder Include=".vs\FLRigSync\v17\" />
+    <Folder Include="diagrams\" />
+    <Folder Include="docs\" />
+    <Folder Include="gui_components\" />
+    <Folder Include="radio_control\" />
+    <Folder Include="resources\" />
+    <Folder Include="sdr_control\" />
+    <Folder Include="utils\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".gitignore" />
+    <Content Include=".vs\FLRigSync\v17\.wsuo" />
+    <Content Include=".vs\FLRigSync\v17\DocumentLayout.json" />
+    <Content Include=".vs\VSWorkspaceState.json" />
+    <Content Include="diagrams\user configurations.key" />
+    <Content Include="docs\Commander TCPIP Messages.pdf" />
+    <Content Include="README.md" />
+    <Content Include="requirements.txt" />
+    <Content Include="resources\cat-relay configurations.png" />
+    <Content Include="resources\DXLab-Commander-settings.png" />
+    <Content Include="resources\Fldigi-settings.png" />
+    <Content Include="resources\Flrig-CAT-config.png" />
+    <Content Include="resources\Flrig-server-config-screen.png" />
+    <Content Include="resources\Flrig-server-diagram.png" />
+    <Content Include="resources\Logger-diagram.png" />
+    <Content Include="resources\N1MM-radio-info.png" />
+    <Content Include="resources\N1MM-settings.png" />
+    <Content Include="resources\rig-server-screen-shot.png" />
+    <Content Include="resources\RUMlogNG-flrig-settings.png" />
+    <Content Include="resources\RUMlogNG-settings.png" />
+    <Content Include="resources\SDR++-settings.png" />
+    <Content Include="resources\settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="app.py" />
+    <Compile Include="cat_relay.py" />
+    <Compile Include="config.py" />
+    <Compile Include="gui_components\dropdown.py" />
+    <Compile Include="gui_components\seconds_input.py" />
+    <Compile Include="gui_components\text_input.py" />
+    <Compile Include="radio_control\dxlab.py" />
+    <Compile Include="radio_control\fldigi.py" />
+    <Compile Include="radio_control\flrig.py" />
+    <Compile Include="radio_control\n1mm.py" />
+    <Compile Include="radio_control\radio_info.py" />
+    <Compile Include="radio_control\transport.py" />
+    <Compile Include="sdr_control\hamlib.py" />
+    <Compile Include="settings.py" />
+    <Compile Include="utils\cat_client.py" />
+    <Compile Include="utils\tcp_client.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include=".venv_FLRigSync\">
+      <Id>.venv_FLRigSync</Id>
+      <Version>3.12</Version>
+      <Description>.venv_FLRigSync (Python 3.12 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>

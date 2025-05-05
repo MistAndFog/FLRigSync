@@ -34,6 +34,12 @@ class FldigiClient(TCPClient):
         self.client = pyfldigi.Client(self._ip, self._port)
         return self
 
+    def set_freq_mode(self, raw_freq):
+        freq = int(raw_freq)
+        if freq and self.last_freq != freq:
+            self.client.rig.frequency = freq
+            self.last_freq = freq
+
     def set_freq_mode(self, raw_freq, mode):
         freq = int(raw_freq)
         if freq and self.last_freq != freq:

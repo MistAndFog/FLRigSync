@@ -43,8 +43,8 @@ SDR_TO_RADIO = {
 class FlrigClient():
 
     def __init__(self, ip, port):
-        self.last_mode = None
-        self.last_freq = None
+        self.last_mode = "USB"
+        self.last_freq = 0
         self._ip = ip
         self._port = port
         self._sock = None
@@ -66,6 +66,12 @@ class FlrigClient():
 
     def close(self):
         self.flrig = None
+
+    def set_freq(self, raw_freq):
+        freq = float(raw_freq)
+        if freq and self.last_freq != freq:
+            self.flrig.rig.set_frequency(freq)
+            self.last_freq = freq
 
     def set_freq_mode(self, raw_freq, mode):
         freq = float(raw_freq)

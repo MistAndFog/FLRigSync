@@ -1,10 +1,10 @@
 import sys
-
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton, QHBoxLayout, \
     QCheckBox
 from PySide6.QtCore import QTimer, Qt, Slot
 
 from cat_relay import CatRelay, MESSAGE, CHANGED
+import cat_relay
 from config import Config, Parameters
 from settings import Settings
 
@@ -52,7 +52,7 @@ class MainWindow(QMainWindow):
         button_box.addWidget(setting_button)
 
         self.config = Config()
-        self.cat_relay = CatRelay(self.config.params)
+        self.cat_relay: cat_relay.CatRelay = CatRelay(self.config.params)
         self.cat_relay.connection_state_changed.connect(self.cat_relay_connection_changed)
         self.timer_id = None
         self.auto_connect = False
