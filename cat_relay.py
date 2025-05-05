@@ -146,24 +146,40 @@ class CatRelay(QObject):
 
     def sync(self):
         try:
-            cat1_freq = self.cat1_client.get_freq()
-            cat1_mode = self.cat1_client.get_mode()
-            if (cat1_freq and cat1_freq != self.cat2_client.get_last_freq() and isinstance(cat1_freq, int)) or \
-                    (cat1_mode and cat1_mode != self.cat2_client.get_last_mode() and isinstance(cat1_mode, str)):
-                self.cat2_client.set_freq_mode(cat1_freq, cat1_mode)
-                return sync_result(True, 'radio', 'SDR', cat1_freq, cat1_mode)
-            else:
-                cat2_freq = self.cat2_client.get_freq()
-                cat2_mode = self.cat2_client.get_mode()
-                if (cat2_freq and cat2_freq != self.cat1_client.get_last_freq() and isinstance(cat2_freq, int)) or \
-                        (cat2_mode and cat2_mode != self.cat1_client.get_last_mode() and isinstance(cat2_mode, str)):
-                    self.cat1_client.set_freq_mode(cat2_freq, cat2_mode)
-                    return sync_result(True, 'SDR', 'radio', cat2_freq, cat2_mode)
-            return sync_result(False)
+            return self.sync_freq()
         except Exception as e:
             print(e)
             self.connection_state_changed.emit(self.is_connected())
             return None
+
+    def sync_freq(self):
+        cat1_freq = self.cat1_client.get_freq()
+        if (cat1_freq and cat1_freq != self.cat2_client.get_last_freq() and isinstance(cat1_freq, int)):
+            self.cat2_client.set_freq(cat1_freq)
+            return sync_result(True, 'radio', 'SDR', cat1_freq, None)
+        else:
+            cat2_freq = self.cat2_client.get_freq()
+            if (cat2_freq and cat2_freq != self.cat1_client.get_last_freq() and isinstance(cat2_freq, int)):
+                self.cat1_client.set_freq(cat2_freq)
+                return sync_result(True, 'SDR', 'radio', cat2_freq, None)
+        return sync_result(False)
+        
+
+    def sync_freq_mode(self):
+        cat1_freq = self.cat1_client.get_freq()
+        cat1_mode = self.cat1_client.get_mode()
+        if (cat1_freq and cat1_freq != self.cat2_client.get_last_freq() and isinstance(cat1_freq, int)) or \
+                    (cat1_mode and cat1_mode != self.cat2_client.get_last_mode() and isinstance(cat1_mode, str)):
+            self.cat2_client.set_freq_mode(cat1_freq, cat1_mode)
+            return sync_result(True, 'radio', 'SDR', cat1_freq, cat1_mode)
+        else:
+            cat2_freq = self.cat2_client.get_freq()
+            cat2_mode = self.cat2_client.get_mode()
+            if (cat2_freq and cat2_freq != self.cat1_client.get_last_freq() and isinstance(cat2_freq, int)) or \
+                        (cat2_mode and cat2_mode != self.cat1_client.get_last_mode() and isinstance(cat2_mode, str)):
+                self.cat1_client.set_freq_mode(cat2_freq, cat2_mode)
+                return sync_result(True, 'SDR', 'radio', cat2_freq, cat2_mode)
+        return sync_result(False)
 
 
 if __name__ == '__main__':
