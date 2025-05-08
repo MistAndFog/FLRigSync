@@ -65,14 +65,13 @@
     <Compile Include="gui_components\seconds_input.py" />
     <Compile Include="gui_components\text_input.py" />
     <Compile Include="radio_control\dxlab.py" />
-    <Compile Include="radio_control\fldigi.py" />
     <Compile Include="radio_control\flrig.py" />
     <Compile Include="radio_control\n1mm.py" />
     <Compile Include="radio_control\radio_info.py" />
+    <Compile Include="radio_control\CatClient.py" />
     <Compile Include="radio_control\transport.py" />
     <Compile Include="sdr_control\hamlib.py" />
     <Compile Include="settings.py" />
-    <Compile Include="utils\cat_client.py" />
     <Compile Include="utils\tcp_client.py" />
   </ItemGroup>
   <ItemGroup>

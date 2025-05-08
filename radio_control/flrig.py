@@ -1,6 +1,7 @@
 import xmlrpc.client
 from .transport import RequestsTransport
 from requests.exceptions import ConnectionError
+from radio_control.CatClient import CatClient
 
 ## The following are the valid modes that can be used on my Icom IC-7100. They may require changing for
 ## your radio. Note that we use two dictionaries here: RADIO_TO_SDR converts the string we get from the
@@ -40,14 +41,10 @@ SDR_TO_RADIO = {
 }
 
     
-class FlrigClient():
+class FlrigClient(CatClient):
 
     def __init__(self, ip, port):
-        self.last_mode = "USB"
-        self.last_freq = 0
-        self._ip = ip
-        self._port = port
-        self._sock = None
+        super().__init__(ip, port)
 
     def __enter__(self):
 #        self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -84,12 +81,6 @@ class FlrigClient():
             self.flrig.rig.set_mode(radiomode)
             self.last_mode = mode
 
-    def get_last_freq(self):
-        return int(self.last_freq)
-
-    def get_last_mode(self):
-        return self.last_mode
-
     def get_freq(self):
         self.last_freq = self.flrig.rig.get_vfo()
         return int(self.last_freq)
@@ -99,3 +90,6 @@ class FlrigClient():
         sdrmode = RADIO_TO_SDR[radiomode]
         self.last_mode = sdrmode
         return self.get_last_mode()
+
+    def map_mode():
+        pass

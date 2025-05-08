@@ -1,6 +1,6 @@
 import socket
 import threading
-
+from radio_control.CatClient import CatClient
 from .radio_info import get_radio_info, set_frequency_message
 
 
@@ -24,15 +24,12 @@ def map_mode(mode, freq):
     return mode
 
 
-class N1MMClient:
-    def __init__(self, listen_port, send_ip, send_port):
+class N1MMClient(CatClient):
+    def __init__(self, listen_port, ip, port):
+        super().__init__(ip, port)
         self.listen_port = listen_port
-        self.send_ip = send_ip
-        self.send_port = send_port
         self.listen_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.last_mode = ''
-        self.last_freq = 0
         self.terminated = False # flag to terminate the thread
 
     def __enter__(self):
@@ -59,7 +56,7 @@ class N1MMClient:
             b_msg = bytes(message, 'utf-8')
         else:
             b_msg = message
-        self.send_sock.sendto(b_msg, (self.send_ip,  self.send_port))
+        self.send_sock.sendto(b_msg, (self.ip,  self.port))
 
     def receive(self):
         data, addr = self.listen_sock.recvfrom(1024)  # buffer size is 1024 bytes
@@ -74,12 +71,6 @@ class N1MMClient:
         if self.send_sock:
             self.send_sock.close()
             self.send_sock = None
-
-    def get_last_mode(self):
-        return self.last_mode
-
-    def get_last_freq(self):
-        return self.last_freq
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()

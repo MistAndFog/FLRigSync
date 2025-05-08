@@ -1,6 +1,5 @@
 import re
-
-from utils.cat_client import CATClient
+from radio_control.CatClient import CatClient
 
 
 def format_command(field, children = None):
@@ -53,8 +52,14 @@ VALID_MODES = [
     'WBFM'
 ]
 
+ALTERNATIVE_MODES = {
+    'RTTY': 'USB',  # RTTY mode from radio will be mapped to USB mode
+    'WFM': 'FM',  # WFM mode from SDR++ will be mapped to FM mode
+    'RAW': None,  # RAW mode from SDR++ will be disabled
+    'DSB': None  # DSB mode from SDR++ will be disabled
+    }
 
-class Commander(CATClient):
+class Commander(CatClient):
     def get_freq(self):
         cmd = format_command('command', 'CmdGetFreq') + format_command('parameters')
         self.send(cmd)
@@ -76,7 +81,6 @@ class Commander(CATClient):
         else:
             return
         self.send(cmd)
-        self.set_last_mode(mode)
         self.set_last_freq(freq)
 
     def set_freq_mode(self, freq, mode=None):
@@ -91,3 +95,11 @@ class Commander(CATClient):
         self.send(cmd)
         self.set_last_mode(mode)
         self.set_last_freq(freq)
+
+    def map_mode(self, mode):
+        valid_mode = mode
+        if mode in self.ALTERNATIVE_MODES:
+            valid_mode = self.ALTERNATIVE_MODES[mode]
+
+    def close(self):
+        pass

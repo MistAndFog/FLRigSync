@@ -3,7 +3,7 @@
 import sys
 import time
 import config
-import utils.cat_client
+from radio_control.CatClient import CatClient
 
 from PySide6.QtCore import QObject, Signal
 
@@ -52,8 +52,8 @@ class CatRelay(QObject):
         self.cat2_ip = params.cat2_ip
         self.cat2_port = params.cat2_port
 
-        self.cat1_client: utils.cat_client.CATClient = None
-        self.cat2_client: utils.cat_client.CATClient = None
+        self.cat1_client: CatClient = None
+        self.cat2_client: CatClient = None
 
     def set_params(self, params: config.Parameters):
         self.cat1_location = params.cat1_location

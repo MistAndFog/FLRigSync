@@ -12,7 +12,7 @@
 ## read and write the frequency and mode.
 
 import re
-from utils.cat_client import CATClient
+from radio_control.CatClient import CatClient
 
 
 def parse_frequency(message):
@@ -61,8 +61,9 @@ VALID_MODES = [
     'WFM',
 ]
 
-
-class HamLibClient(CATClient):
+# TODO Need to convert this to use Rig
+# TODO CatClient might be a better name than Rig
+class HamLibClient(CatClient):
 
     def set_freq_mode(self, freq, mode=None):
         if mode and self.get_last_mode() != mode:
