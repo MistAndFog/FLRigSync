@@ -12,7 +12,7 @@ from radio_control.dxlab import Commander
 from radio_control.n1mm import N1MMClient
 from radio_control.flrig import FlrigClient
 
-from config import Config, DXLAB, N1MM, FLRIG, RUMLOG, NETWORK, LOCAL_HOST
+from config import SDRPP, Config, DXLAB, N1MM, FLRIG, RUMLOG, NETWORK, LOCAL_HOST
 
 MODE = "mode"
 FREQUENCY = "frequency"
@@ -123,6 +123,9 @@ class CatRelay(QObject):
         elif self.cat1_software == FLRIG:
             print(f'Connecting to {self.cat1_software} at {ip_address}:{self.cat1_port}')
             return FlrigClient(ip_address, self.cat1_port).__enter__()
+        elif self.cat1_software == SDRPP:
+            print(f'Connecting to {self.cat1_software} at {ip_address}:{self.cat1_port}')
+            return HamLibClient(ip_address, self.cat1_port).__enter__()
         else:
             message = f'Cat software "{self.cat1_software}" is not supported!'
             print(message)
@@ -139,6 +142,9 @@ class CatRelay(QObject):
         elif self.cat2_software == FLRIG:
             print(f'Connecting to {self.cat2_software} at {ip_address}:{self.cat2_port}')
             return FlrigClient(ip_address, self.cat2_port).__enter__()
+        elif self.cat2_software == SDRPP:
+            print(f'Connecting to {self.cat2_software} at {ip_address}:{self.cat2_port}')
+            return HamLibClient(ip_address, self.cat2_port).__enter__()
         else:
             message = f'Cat software "{self.cat2_software}" is not supported!'
             print(message)

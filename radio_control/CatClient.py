@@ -40,17 +40,17 @@ class CatClient(ABC):
 
     def set_last_freq(self, freq):
         if freq and isinstance(freq, int):
-            self._last_freq = freq
+            self.last_freq = freq
 
     def get_last_mode(self):
         return self.last_mode
 
     def set_last_mode(self, mode):
         if mode:
-            self._last_mode = mode
+            self.last_mode = mode
 
     def _enter(self):
-        self._last_freq = self.get_freq()
-        self._last_mode = self.get_mode()
+        self.last_freq = self.get_freq()
+        self.last_mode = self.get_mode()
 
 

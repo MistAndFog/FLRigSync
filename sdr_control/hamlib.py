@@ -13,6 +13,7 @@
 
 import re
 from radio_control.CatClient import CatClient
+from utils.tcp_client import TCPClient
 
 
 def parse_frequency(message):
@@ -61,9 +62,34 @@ VALID_MODES = [
     'WFM',
 ]
 
+
 # TODO Need to convert this to use Rig
 # TODO CatClient might be a better name than Rig
-class HamLibClient(CatClient):
+class HamLibClient(CatClient, TCPClient):
+
+    def __init__(self, ip, port):
+        super().__init__(ip, port)
+
+    def get_freq(self):
+        message = f'f\n'
+        self.send(message)
+        freq = self.receive()
+        if freq is None:
+            return self.last_freq
+        self.last_freq = int(parse_frequency(freq))
+        return self.last_freq
+
+    def get_mode(self):
+        message = f'm\n'
+        self.send(message)
+        self.set_last_mode(self.map_mode(parse_mode(self.receive())))
+        return self.get_last_mode()
+
+    def set_freq(self, freq):
+        if freq and self.last_freq != freq:
+            message = f'F {freq}\n'
+            self.send(message)
+            self.last_freq = freq
 
     def set_freq_mode(self, freq, mode=None):
         if mode and self.get_last_mode() != mode:
@@ -84,14 +110,12 @@ class HamLibClient(CatClient):
             else:
                 print(f'Set Hamlib to {freq}Hz failed!')
 
-    def get_freq(self):
-        message = f'f\n'
-        self.send(message)
-        self.set_last_freq(parse_frequency(self.receive()))
-        return self.get_last_freq()
+    def close(self):
+        TCPClient.close(self)
+        return
 
-    def get_mode(self):
-        message = f'm\n'
-        self.send(message)
-        self.set_last_mode(self.map_mode(parse_mode(self.receive())))
-        return self.get_last_mode()
+    def map_mode(self, mode):
+        pass
+        return
+
+
